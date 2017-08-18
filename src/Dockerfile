@@ -3,10 +3,6 @@ FROM microsoft/windowsservercore
 RUN cmd.exe /C net users /ADD vcap /passwordreq:no /expires:never && runas /user:vcap whoami
 RUN cmd.exe /C net accounts /maxpwage:UNLIMITED
 
-COPY urlacl.exe /urlacl.exe
-RUN C:\urlacl.exe
-RUN del /F C:\urlacl.exe
-
 RUN powershell.exe -Command \
   $ErrorActionPreference = 'Stop'; \
   \
