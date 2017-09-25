@@ -1,0 +1,5 @@
+---
+name: windows2016fs
+
+files:
+  - windows2016fs/windows2016fs-*.tgz
