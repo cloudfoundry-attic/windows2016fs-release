@@ -13,3 +13,6 @@ releases/**/*.tgz
 *#
 #*
 pkg
+*.tgz
+*.exe
+bin

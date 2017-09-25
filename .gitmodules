@@ -16,3 +16,12 @@
 [submodule "src/golang.org/x/text"]
 	path = src/golang.org/x/text
 	url = https://github.com/golang/text
+[submodule "src/github.com/golang/protobuf"]
+	path = src/github.com/golang/protobuf
+	url = https://github.com/golang/protobuf.git
+[submodule "src/github.com/opencontainers/image-spec"]
+	path = src/github.com/opencontainers/image-spec
+	url = https://github.com/opencontainers/image-spec
+[submodule "src/github.com/opencontainers/go-digest"]
+	path = src/github.com/opencontainers/go-digest
+	url = https://github.com/opencontainers/go-digest
