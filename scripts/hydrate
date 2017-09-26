@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -eu
+
+if ! [[ $(go version) == *go1.9* ]]; then
+  echo "Must have go 1.9"
+  exit 1
+fi
+
+ROOTDIR="$( dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" )"
+
+export GOPATH=$ROOTDIR
+
+cd $ROOTDIR
+image_tag=$(cat IMAGE_TAG)
+image_name="cloudfoundry/windows2016fs"
+output_dir="blobs/windows2016fs"
+mkdir -p $output_dir
+
+go run src/hydrate/cmd/hydrate/main.go -image $image_name -outputDir $output_dir -tag $image_tag
