@@ -10,10 +10,11 @@ $ROOTDIR=(Split-Path -Parent $PSScriptRoot)
 
 $env:GOPATH=$ROOTDIR
 
-cd $ROOTDIR
-$image_tag=(cat IMAGE_TAG)
-$image_name="cloudfoundry/windows2016fs"
-$output_dir="blobs/windows2016fs"
-mkdir -Force $output_dir
+Push-Location $ROOTDIR
+  $image_tag=(cat IMAGE_TAG)
+  $image_name="cloudfoundry/windows2016fs"
+  $output_dir="blobs/windows2016fs"
+  mkdir -Force $output_dir
 
-go run src/hydrate/cmd/hydrate/main.go -image $image_name -outputDir $output_dir -tag $image_tag
+  go run src/hydrate/cmd/hydrate/main.go -image $image_name -outputDir $output_dir -tag $image_tag
+Pop-Location
