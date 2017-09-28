@@ -30,7 +30,7 @@
 	url = https://github.com/Microsoft/go-winio
 [submodule "src/github.com/Microsoft/hcsshim"]
 	path = src/github.com/Microsoft/hcsshim
-	url = https://github.com/Microsoft/hcsshim
+	url = https://github.com/greehouse-org/hcsshim
 [submodule "src/golang.org/x/sys"]
 	path = src/golang.org/x/sys
 	url = https://go.googlesource.com/sys
