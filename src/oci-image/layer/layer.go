@@ -23,10 +23,37 @@ type Manager struct {
 	driverInfo hcsshim.DriverInfo
 }
 
+type State int
+
+const (
+	NotExist = iota
+	Incomplete
+	Valid
+)
+
 func NewManager(driverInfo hcsshim.DriverInfo) *Manager {
 	return &Manager{
 		driverInfo: driverInfo,
 	}
+}
+
+func (m *Manager) State(id string) (State, error) {
+	layerDir := filepath.Join(m.driverInfo.HomeDir, id)
+	_, err := os.Stat(layerDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return NotExist, nil
+		}
+
+		return Incomplete, err
+	}
+
+	data, err := ioutil.ReadFile(filepath.Join(layerDir, ".complete"))
+	if err != nil || string(data) != id {
+		return Incomplete, nil
+	}
+
+	return Valid, nil
 }
 
 func (m *Manager) Delete(layerId string) error {
@@ -62,7 +89,25 @@ func (m *Manager) Extract(layerGzipFile, layerId string, parentLayerPaths []stri
 	defer gr.Close()
 
 	tr := tar.NewReader(gr)
+	if err := writeLayer(tr, layerWriter); err != nil {
+		return err
+	}
 
+	if len(parentLayerPaths) > 0 {
+		data, err := json.Marshal(parentLayerPaths)
+		if err != nil {
+			return err
+		}
+
+		if err := ioutil.WriteFile(filepath.Join(m.driverInfo.HomeDir, layerId, "layerchain.json"), data, 0644); err != nil {
+			return err
+		}
+	}
+
+	return ioutil.WriteFile(filepath.Join(m.driverInfo.HomeDir, ".complete"), []byte(layerId), 0644)
+}
+
+func writeLayer(tr *tar.Reader, layerWriter hcsshim.LayerWriter) error {
 	hdr, err := tr.Next()
 	buf := bufio.NewWriter(nil)
 
@@ -108,47 +153,5 @@ func (m *Manager) Extract(layerGzipFile, layerId string, parentLayerPaths []stri
 		return err
 	}
 
-	if err := layerWriter.Close(); err != nil {
-		return err
-	}
-
-	if len(parentLayerPaths) > 0 {
-		data, err := json.Marshal(parentLayerPaths)
-		if err != nil {
-			return err
-		}
-
-		if err := ioutil.WriteFile(filepath.Join(m.driverInfo.HomeDir, layerId, "layerchain.json"), data, 0644); err != nil {
-			return err
-		}
-	}
-
-	return ioutil.WriteFile(filepath.Join(m.driverInfo.HomeDir, ".complete"), []byte(layerId), 0644)
-}
-
-type State int
-
-const (
-	NotExist = iota
-	Incomplete
-	Valid
-)
-
-func (m *Manager) State(id string) (State, error) {
-	layerDir := filepath.Join(m.driverInfo.HomeDir, id)
-	_, err := os.Stat(layerDir)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return NotExist, nil
-		}
-
-		return Incomplete, err
-	}
-
-	data, err := ioutil.ReadFile(filepath.Join(layerDir, ".complete"))
-	if err != nil || string(data) != id {
-		return Incomplete, nil
-	}
-
-	return Valid, nil
+	return layerWriter.Close()
 }
