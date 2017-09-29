@@ -134,6 +134,21 @@ const (
 	Valid
 )
 
-func (m *Manager) State() (State, error) {
-	return NotExist, nil
+func (m *Manager) State(id string) (State, error) {
+	layerDir := filepath.Join(m.driverInfo.HomeDir, id)
+	_, err := os.Stat(layerDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return NotExist, nil
+		}
+
+		return Incomplete, err
+	}
+
+	data, err := ioutil.ReadFile(filepath.Join(layerDir, ".complete"))
+	if err != nil || string(data) != id {
+		return Incomplete, nil
+	}
+
+	return Valid, nil
 }

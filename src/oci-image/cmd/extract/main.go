@@ -37,16 +37,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	var m v1.Manifest
-	if err := json.Unmarshal(manifestData, &m); err != nil {
+	var manifest v1.Manifest
+	if err := json.Unmarshal(manifestData, &manifest); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 
-	l := layer.NewManager(hcsshim.DriverInfo{HomeDir: outputDir, Flavour: 1})
-	i := image.NewExtractor(layerTempDir, outputDir, m, l, os.Stderr)
+	lm := layer.NewManager(hcsshim.DriverInfo{HomeDir: outputDir, Flavour: 1})
+	im := image.NewManager(layerTempDir, outputDir, manifest, lm, os.Stderr)
 
-	topLayer, err := i.Extract()
+	topLayer, err := im.Extract()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)

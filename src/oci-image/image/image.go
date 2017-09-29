@@ -17,7 +17,7 @@ type LayerManager interface {
 	State(string) (layer.State, error)
 }
 
-type Extractor struct {
+type Manager struct {
 	srcDir       string
 	outputDir    string
 	manifest     v1.Manifest
@@ -25,8 +25,8 @@ type Extractor struct {
 	output       io.Writer
 }
 
-func NewExtractor(srcDir, outputDir string, manifest v1.Manifest, layerManager LayerManager, output io.Writer) *Extractor {
-	return &Extractor{
+func NewManager(srcDir, outputDir string, manifest v1.Manifest, layerManager LayerManager, output io.Writer) *Manager {
+	return &Manager{
 		srcDir:       srcDir,
 		outputDir:    outputDir,
 		manifest:     manifest,
@@ -35,25 +35,25 @@ func NewExtractor(srcDir, outputDir string, manifest v1.Manifest, layerManager L
 	}
 }
 
-func (e *Extractor) Extract() (string, error) {
-	if err := os.MkdirAll(e.outputDir, 0755); err != nil {
+func (m *Manager) Extract() (string, error) {
+	if err := os.MkdirAll(m.outputDir, 0755); err != nil {
 		return "", err
 	}
 
 	parentLayerPaths := []string{}
-	for _, l := range e.manifest.Layers {
+	for _, l := range m.manifest.Layers {
 		layerId := l.Digest.Encoded()
-		layerTgz := filepath.Join(e.srcDir, layerId)
-		layerDir := filepath.Join(e.outputDir, layerId)
+		layerTgz := filepath.Join(m.srcDir, layerId)
+		layerDir := filepath.Join(m.outputDir, layerId)
 
-		state, err := e.layerManager.State(layerId)
+		state, err := m.layerManager.State(layerId)
 		if err != nil {
 			return "", err
 		}
 
 		switch state {
 		case layer.Incomplete:
-			if err := e.layerManager.Delete(layerId); err != nil {
+			if err := m.layerManager.Delete(layerId); err != nil {
 				return "", err
 			}
 			fallthrough
@@ -62,11 +62,11 @@ func (e *Extractor) Extract() (string, error) {
 				return "", err
 			}
 
-			fmt.Fprintf(e.output, "Extracting %s... ", layerId)
-			if err := e.layerManager.Extract(layerTgz, layerId, parentLayerPaths); err != nil {
+			fmt.Fprintf(m.output, "Extracting %s... ", layerId)
+			if err := m.layerManager.Extract(layerTgz, layerId, parentLayerPaths); err != nil {
 				return "", err
 			}
-			fmt.Fprintln(e.output, "Done.")
+			fmt.Fprintln(m.output, "Done.")
 		case layer.Valid:
 			// do nothing, layer already exists
 		default:

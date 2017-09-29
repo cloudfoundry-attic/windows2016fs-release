@@ -1,7 +1,6 @@
 package image_test
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"oci-image/image"
 	"oci-image/image/imagefakes"
@@ -23,7 +22,7 @@ var _ = Describe("Image", func() {
 			tempDir  string
 			manifest v1.Manifest
 			lm       *imagefakes.FakeLayerManager
-			e        *image.Extractor
+			im       *image.Manager
 		)
 
 		const (
@@ -51,7 +50,7 @@ var _ = Describe("Image", func() {
 			destDir = filepath.Join(tempDir, "dest")
 			lm = &imagefakes.FakeLayerManager{}
 
-			e = image.NewExtractor(srcDir, destDir, manifest, lm, ioutil.Discard)
+			im = image.NewManager(srcDir, destDir, manifest, lm, ioutil.Discard)
 		})
 
 		AfterEach(func() {
@@ -59,7 +58,7 @@ var _ = Describe("Image", func() {
 		})
 
 		It("extracts all the layers, returning the top", func() {
-			topLayer, err := e.Extract()
+			topLayer, err := im.Extract()
 			Expect(err).NotTo(HaveOccurred())
 			Expect(topLayer).To(Equal(filepath.Join(destDir, layer3)))
 
@@ -88,7 +87,7 @@ var _ = Describe("Image", func() {
 				return nil
 			}
 
-			_, err := e.Extract()
+			_, err := im.Extract()
 			Expect(err).NotTo(HaveOccurred())
 		})
 
@@ -98,7 +97,7 @@ var _ = Describe("Image", func() {
 			})
 
 			It("does not re-extract the existing layer", func() {
-				_, err := e.Extract()
+				_, err := im.Extract()
 				Expect(err).NotTo(HaveOccurred())
 				Expect(lm.DeleteCallCount()).To(Equal(0))
 
@@ -121,7 +120,7 @@ var _ = Describe("Image", func() {
 			})
 
 			It("deletes the incomplete layer and re-extracts", func() {
-				_, err := e.Extract()
+				_, err := im.Extract()
 				Expect(err).NotTo(HaveOccurred())
 
 				Expect(lm.DeleteCallCount()).To(Equal(1))
@@ -146,12 +145,3 @@ var _ = Describe("Image", func() {
 		})
 	})
 })
-
-func getLayerChain(dir string) []string {
-	var layers []string
-	data, err := ioutil.ReadFile(filepath.Join(dir, "layerchain.json"))
-	Expect(err).NotTo(HaveOccurred())
-
-	Expect(json.Unmarshal(data, &layers)).To(Succeed())
-	return layers
-}
