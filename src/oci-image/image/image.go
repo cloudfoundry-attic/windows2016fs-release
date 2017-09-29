@@ -1,10 +1,9 @@
 package image
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"oci-image/layer"
 	"os"
 	"path/filepath"
 
@@ -14,6 +13,8 @@ import (
 //go:generate counterfeiter . LayerManager
 type LayerManager interface {
 	Extract(string, string, []string) error
+	Delete(string) error
+	State(string) (layer.State, error)
 }
 
 type Extractor struct {
@@ -40,30 +41,36 @@ func (e *Extractor) Extract() (string, error) {
 	}
 
 	parentLayerPaths := []string{}
-	for _, layer := range e.manifest.Layers {
-		layerId := layer.Digest.Encoded()
+	for _, l := range e.manifest.Layers {
+		layerId := l.Digest.Encoded()
 		layerTgz := filepath.Join(e.srcDir, layerId)
 		layerDir := filepath.Join(e.outputDir, layerId)
 
-		if err := os.MkdirAll(layerDir, 0755); err != nil {
+		state, err := e.layerManager.State(layerId)
+		if err != nil {
 			return "", err
 		}
 
-		fmt.Fprintf(e.output, "Extracting %s... ", layerId)
-		if err := e.layerManager.Extract(layerTgz, layerId, parentLayerPaths); err != nil {
-			return "", err
-		}
-		fmt.Fprintln(e.output, "Done.")
-
-		if len(parentLayerPaths) > 0 {
-			data, err := json.Marshal(parentLayerPaths)
-			if err != nil {
-				return "", fmt.Errorf("Failed to marshal layerchain.json: %s", err.Error())
+		switch state {
+		case layer.Incomplete:
+			if err := e.layerManager.Delete(layerId); err != nil {
+				return "", err
+			}
+			fallthrough
+		case layer.NotExist:
+			if err := os.MkdirAll(layerDir, 0755); err != nil {
+				return "", err
 			}
 
-			if err := ioutil.WriteFile(filepath.Join(e.outputDir, layerId, "layerchain.json"), data, 0644); err != nil {
-				return "", fmt.Errorf("Failed to write layerchain.json: %s", err.Error())
+			fmt.Fprintf(e.output, "Extracting %s... ", layerId)
+			if err := e.layerManager.Extract(layerTgz, layerId, parentLayerPaths); err != nil {
+				return "", err
 			}
+			fmt.Fprintln(e.output, "Done.")
+		case layer.Valid:
+			// do nothing, layer already exists
+		default:
+			panic(fmt.Sprintf("invalid layer state: %d", state))
 		}
 
 		parentLayerPaths = append([]string{layerDir}, parentLayerPaths...)

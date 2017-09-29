@@ -3,8 +3,10 @@ package layer
 import (
 	"bufio"
 	"compress/gzip"
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -25,6 +27,15 @@ func NewManager(driverInfo hcsshim.DriverInfo) *Manager {
 	return &Manager{
 		driverInfo: driverInfo,
 	}
+}
+
+func (m *Manager) Delete(layerId string) error {
+	if err := winio.EnableProcessPrivileges([]string{winio.SeBackupPrivilege, winio.SeRestorePrivilege}); err != nil {
+		return err
+	}
+	defer winio.DisableProcessPrivileges([]string{winio.SeBackupPrivilege, winio.SeRestorePrivilege})
+
+	return os.RemoveAll(filepath.Join(m.driverInfo.HomeDir, layerId))
 }
 
 func (m *Manager) Extract(layerGzipFile, layerId string, parentLayerPaths []string) error {
@@ -97,5 +108,32 @@ func (m *Manager) Extract(layerGzipFile, layerId string, parentLayerPaths []stri
 		return err
 	}
 
-	return layerWriter.Close()
+	if err := layerWriter.Close(); err != nil {
+		return err
+	}
+
+	if len(parentLayerPaths) > 0 {
+		data, err := json.Marshal(parentLayerPaths)
+		if err != nil {
+			return err
+		}
+
+		if err := ioutil.WriteFile(filepath.Join(m.driverInfo.HomeDir, layerId, "layerchain.json"), data, 0644); err != nil {
+			return err
+		}
+	}
+
+	return ioutil.WriteFile(filepath.Join(m.driverInfo.HomeDir, ".complete"), []byte(layerId), 0644)
+}
+
+type State int
+
+const (
+	NotExist = iota
+	Incomplete
+	Valid
+)
+
+func (m *Manager) State() (State, error) {
+	return NotExist, nil
 }

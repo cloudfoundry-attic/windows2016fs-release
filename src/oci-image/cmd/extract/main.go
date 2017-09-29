@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"extract/image"
-	"extract/layer"
 	"fmt"
 	"io/ioutil"
+	"oci-image/image"
+	"oci-image/layer"
 	"os"
 	"path/filepath"
 

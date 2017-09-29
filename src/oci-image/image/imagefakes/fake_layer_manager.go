@@ -3,6 +3,7 @@ package imagefakes
 
 import (
 	"oci-image/image"
+	"oci-image/layer"
 	"sync"
 )
 
@@ -19,6 +20,30 @@ type FakeLayerManager struct {
 	}
 	extractReturnsOnCall map[int]struct {
 		result1 error
+	}
+	DeleteStub        func(string) error
+	deleteMutex       sync.RWMutex
+	deleteArgsForCall []struct {
+		arg1 string
+	}
+	deleteReturns struct {
+		result1 error
+	}
+	deleteReturnsOnCall map[int]struct {
+		result1 error
+	}
+	StateStub        func(string) (layer.State, error)
+	stateMutex       sync.RWMutex
+	stateArgsForCall []struct {
+		arg1 string
+	}
+	stateReturns struct {
+		result1 layer.State
+		result2 error
+	}
+	stateReturnsOnCall map[int]struct {
+		result1 layer.State
+		result2 error
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -79,11 +104,114 @@ func (fake *FakeLayerManager) ExtractReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
+func (fake *FakeLayerManager) Delete(arg1 string) error {
+	fake.deleteMutex.Lock()
+	ret, specificReturn := fake.deleteReturnsOnCall[len(fake.deleteArgsForCall)]
+	fake.deleteArgsForCall = append(fake.deleteArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("Delete", []interface{}{arg1})
+	fake.deleteMutex.Unlock()
+	if fake.DeleteStub != nil {
+		return fake.DeleteStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fake.deleteReturns.result1
+}
+
+func (fake *FakeLayerManager) DeleteCallCount() int {
+	fake.deleteMutex.RLock()
+	defer fake.deleteMutex.RUnlock()
+	return len(fake.deleteArgsForCall)
+}
+
+func (fake *FakeLayerManager) DeleteArgsForCall(i int) string {
+	fake.deleteMutex.RLock()
+	defer fake.deleteMutex.RUnlock()
+	return fake.deleteArgsForCall[i].arg1
+}
+
+func (fake *FakeLayerManager) DeleteReturns(result1 error) {
+	fake.DeleteStub = nil
+	fake.deleteReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeLayerManager) DeleteReturnsOnCall(i int, result1 error) {
+	fake.DeleteStub = nil
+	if fake.deleteReturnsOnCall == nil {
+		fake.deleteReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.deleteReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeLayerManager) State(arg1 string) (layer.State, error) {
+	fake.stateMutex.Lock()
+	ret, specificReturn := fake.stateReturnsOnCall[len(fake.stateArgsForCall)]
+	fake.stateArgsForCall = append(fake.stateArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("State", []interface{}{arg1})
+	fake.stateMutex.Unlock()
+	if fake.StateStub != nil {
+		return fake.StateStub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fake.stateReturns.result1, fake.stateReturns.result2
+}
+
+func (fake *FakeLayerManager) StateCallCount() int {
+	fake.stateMutex.RLock()
+	defer fake.stateMutex.RUnlock()
+	return len(fake.stateArgsForCall)
+}
+
+func (fake *FakeLayerManager) StateArgsForCall(i int) string {
+	fake.stateMutex.RLock()
+	defer fake.stateMutex.RUnlock()
+	return fake.stateArgsForCall[i].arg1
+}
+
+func (fake *FakeLayerManager) StateReturns(result1 layer.State, result2 error) {
+	fake.StateStub = nil
+	fake.stateReturns = struct {
+		result1 layer.State
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeLayerManager) StateReturnsOnCall(i int, result1 layer.State, result2 error) {
+	fake.StateStub = nil
+	if fake.stateReturnsOnCall == nil {
+		fake.stateReturnsOnCall = make(map[int]struct {
+			result1 layer.State
+			result2 error
+		})
+	}
+	fake.stateReturnsOnCall[i] = struct {
+		result1 layer.State
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeLayerManager) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.extractMutex.RLock()
 	defer fake.extractMutex.RUnlock()
+	fake.deleteMutex.RLock()
+	defer fake.deleteMutex.RUnlock()
+	fake.stateMutex.RLock()
+	defer fake.stateMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value
