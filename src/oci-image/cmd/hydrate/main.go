@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"hydrate/compress"
-	"hydrate/hydrator"
-	"hydrate/registry"
 	"io/ioutil"
+	"oci-image/compress"
+	"oci-image/hydrator"
+	"oci-image/registry"
 	"os"
 	"path/filepath"
 	"strings"

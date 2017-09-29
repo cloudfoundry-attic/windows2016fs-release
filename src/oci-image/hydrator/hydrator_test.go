@@ -2,9 +2,9 @@ package hydrator_test
 
 import (
 	"errors"
-	"hydrate/hydrator"
-	"hydrate/hydrator/hydratorfakes"
 	"io/ioutil"
+	"oci-image/hydrator"
+	"oci-image/hydrator/hydratorfakes"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

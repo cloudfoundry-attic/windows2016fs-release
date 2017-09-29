@@ -16,5 +16,5 @@ Push-Location $ROOTDIR
   $output_dir="blobs/windows2016fs"
   mkdir -Force $output_dir
 
-  go run src/hydrate/cmd/hydrate/main.go -image $image_name -outputDir $output_dir -tag $image_tag
+  go run src/oci-image/cmd/hydrate/main.go -image $image_name -outputDir $output_dir -tag $image_tag
 Pop-Location

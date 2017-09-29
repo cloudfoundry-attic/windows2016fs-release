@@ -3,9 +3,9 @@ package registry_test
 import (
 	"encoding/json"
 	"fmt"
-	"hydrate/registry"
 	"io/ioutil"
 	"net/http"
+	"oci-image/registry"
 	"os"
 	"path/filepath"
 	"strings"

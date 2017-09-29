@@ -6,7 +6,7 @@ dependencies:
   - mingw
 
 files:
-  - extract/**/*
+  - oci-image/**/*
   - github.com/Microsoft/**/*
   - github.com/sirupsen/**/*
   - golang.org/x/sys/windows/**/*

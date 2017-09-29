@@ -3,9 +3,9 @@ package compress_test
 import (
 	"crypto/sha256"
 	"fmt"
-	"hydrate/compress"
 	"io"
 	"io/ioutil"
+	"oci-image/compress"
 	"os"
 	"path/filepath"
 

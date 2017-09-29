@@ -7,7 +7,7 @@ $env:GOROOT="C:\var\vcap\packages\golang-windows\go"
 $env:GOPATH="${BOSH_INSTALL_TARGET}"
 $env:PATH="${env:GOROOT}\bin;${env:PATH}"
 $pkg_name="extract"
-$pkg_path="extract/cmd/extract"
+$pkg_path="oci-image/cmd/extract"
 
 $env:PATH="C:\var\vcap\packages\mingw\mingw64\bin;"+$env:Path
 
