@@ -2,7 +2,7 @@
 package hydratorfakes
 
 import (
-	"hydrate/hydrator"
+	"oci-image/hydrator"
 	"sync"
 )
 

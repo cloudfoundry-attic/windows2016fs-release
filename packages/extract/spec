@@ -1,0 +1,17 @@
+---
+name: extract
+
+dependencies:
+  - golang-windows
+  - mingw
+
+files:
+  - oci-image/**/*
+  - github.com/Microsoft/**/*
+  - github.com/sirupsen/**/*
+  - golang.org/x/sys/windows/**/*
+  - golang.org/x/crypto/**/*
+  - code.cloudfoundry.org/archiver/**/*
+  - github.com/opencontainers/image-spec/**/*
+  - github.com/opencontainers/go-digest/**/*
+

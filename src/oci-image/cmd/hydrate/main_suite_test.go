@@ -1,7 +1,6 @@
 package main_test
 
 import (
-	"math/rand"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -21,9 +20,8 @@ var hydrateBin string
 
 var _ = BeforeSuite(func() {
 	var err error
-	hydrateBin, err = gexec.Build("hydrate/cmd/hydrate")
+	hydrateBin, err = gexec.Build("oci-image/cmd/hydrate")
 	Expect(err).NotTo(HaveOccurred())
-	rand.Seed(time.Now().UnixNano())
 })
 
 var _ = AfterSuite(func() {

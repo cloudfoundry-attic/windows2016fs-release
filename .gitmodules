@@ -25,3 +25,18 @@
 [submodule "src/github.com/opencontainers/go-digest"]
 	path = src/github.com/opencontainers/go-digest
 	url = https://github.com/opencontainers/go-digest
+[submodule "src/github.com/Microsoft/go-winio"]
+	path = src/github.com/Microsoft/go-winio
+	url = https://github.com/Microsoft/go-winio
+[submodule "src/github.com/Microsoft/hcsshim"]
+	path = src/github.com/Microsoft/hcsshim
+	url = https://github.com/greehouse-org/hcsshim
+[submodule "src/golang.org/x/sys"]
+	path = src/golang.org/x/sys
+	url = https://go.googlesource.com/sys
+[submodule "src/github.com/sirupsen/logrus"]
+	path = src/github.com/sirupsen/logrus
+	url = https://github.com/sirupsen/logrus
+[submodule "src/golang.org/x/crypto"]
+	path = src/golang.org/x/crypto
+	url = https://go.googlesource.com/crypto
