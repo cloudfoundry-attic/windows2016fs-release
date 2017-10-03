@@ -17,36 +17,38 @@ import (
 )
 
 func main() {
+	if err := mainBody(); err != nil {
+		fmt.Fprintln(os.Stderr, "ERROR: "+err.Error())
+		os.Exit(1)
+	}
+}
+
+func mainBody() error {
 	rootfstgz := os.Args[1]
 	outputDir := os.Args[2]
 
 	layerTempDir, err := ioutil.TempDir("", "hcslayers")
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+		return err
 	}
 
 	if err := extractor.NewTgz().Extract(rootfstgz, layerTempDir); err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+		return err
 	}
 	defer os.RemoveAll(layerTempDir)
 
 	manifestData, err := ioutil.ReadFile(filepath.Join(layerTempDir, "manifest.json"))
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+		return err
 	}
 
 	var manifest v1.Manifest
 	if err := json.Unmarshal(manifestData, &manifest); err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+		return err
 	}
 
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+		return err
 	}
 
 	lm := layer.NewManager(hcsshim.DriverInfo{HomeDir: outputDir, Flavour: 1}, &writer.Writer{})
@@ -54,9 +56,9 @@ func main() {
 
 	topLayerId, err := im.Extract()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
+		return err
 	}
 
 	fmt.Printf(filepath.Join(outputDir, topLayerId))
+	return nil
 }

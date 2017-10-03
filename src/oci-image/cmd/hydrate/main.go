@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -13,25 +14,32 @@ import (
 )
 
 func main() {
+	if err := mainBody(); err != nil {
+		fmt.Fprintln(os.Stderr, "ERROR: "+err.Error())
+		os.Exit(1)
+	}
+}
+
+func mainBody() error {
 	outDir, imageName, imageTag := parseFlags()
 
 	if err := os.MkdirAll(outDir, 0755); err != nil {
-		fatalErr("Could not create output directory")
+		return errors.New("Could not create output directory")
 	}
 
 	if imageName == "" {
-		fatalErr("No image name provided")
+		return errors.New("No image name provided")
 	}
 
 	nameParts := strings.Split(imageName, "/")
 	if len(nameParts) != 2 {
-		fatalErr("Invalid image name")
+		return errors.New("Invalid image name")
 	}
 	outFile := filepath.Join(outDir, fmt.Sprintf("%s-%s.tgz", nameParts[1], imageTag))
 
 	tempDir, err := ioutil.TempDir("", "hydrate")
 	if err != nil {
-		fatalErr(fmt.Sprintf("Could not create tmp dir: %s", tempDir))
+		return fmt.Errorf("Could not create tmp dir: %s", tempDir)
 	}
 	defer os.RemoveAll(tempDir)
 
@@ -40,10 +48,10 @@ func main() {
 	h := hydrator.New(tempDir, outFile, r, c, os.Stdout)
 
 	if err := h.Run(); err != nil {
-		fatalErr(err.Error())
+		return err
 	}
 	fmt.Println("Done.")
-	os.Exit(0)
+	return nil
 }
 
 func parseFlags() (string, string, string) {
@@ -53,9 +61,4 @@ func parseFlags() (string, string, string) {
 	flag.Parse()
 
 	return *outDir, *imageName, *imageTag
-}
-
-func fatalErr(msg string) {
-	fmt.Fprintln(os.Stderr, "ERROR: "+msg)
-	os.Exit(1)
 }
