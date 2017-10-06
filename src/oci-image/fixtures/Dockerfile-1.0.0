@@ -1,3 +1,0 @@
-FROM microsoft/nanoserver
-
-RUN cmd.exe /C echo hello > out.txt
