@@ -81,10 +81,10 @@ func copyReleaseDir(src, dst string) {
 
 func checkoutDirectory(dir string) {
 	cmds := []*exec.Cmd{
-		exec.Command("git", "config", "core.filemode", "false"),
+		//		exec.Command("git", "config", "core.filemode", "false"),
 		exec.Command("git", "config", "user.email", "garden-windows-eng@pivotal.io"),
 		exec.Command("git", "config", "user.name", "Garden Windows CI"),
-		exec.Command("git", "submodule", "foreach", "--recursive", "git", "config", "core.filemode", "false"),
+		//		exec.Command("git", "submodule", "foreach", "--recursive", "git", "config", "core.filemode", "false"),
 		exec.Command("git", "add", "."),
 		exec.Command("git", "commit", "--allow-empty", "-m", "WIP - test commit"),
 	}
