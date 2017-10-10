@@ -50,7 +50,7 @@ var _ = Describe("Create", func() {
 	})
 
 	It("creates the release", func() {
-		Eventually(session, 20*time.Minute).Should(gexec.Exit(0))
+		Eventually(session, 30*time.Minute).Should(gexec.Exit(0))
 
 		data, err := ioutil.ReadFile(filepath.Join(releaseDir, "dev_releases", "windows2016fs", fmt.Sprintf("windows2016fs-%s.yml", version)))
 		Expect(err).NotTo(HaveOccurred())
@@ -93,6 +93,6 @@ func checkoutDirectory(dir string) {
 		cmd.Dir = dir
 		gitSession, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).NotTo(HaveOccurred())
-		Eventually(gitSession, 1*time.Minute).Should(gexec.Exit(0))
+		Eventually(gitSession, 2*time.Minute).Should(gexec.Exit(0))
 	}
 }
