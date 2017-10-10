@@ -37,7 +37,7 @@ var _ = Describe("Create", func() {
 		gitAddCmd := exec.Command("git", "add", ".")
 		gitAddCmd.Dir = releaseDir
 		Expect(gitAddCmd.Run()).To(Succeed())
-		wipCommitCmd := exec.Command("git", "commit", "-a", "-m", "WIP - test commit")
+		wipCommitCmd := exec.Command("git", "commit", "-a", "--allow-empty", "-m", "WIP - test commit")
 		wipCommitCmd.Dir = releaseDir
 		Expect(wipCommitCmd.Run()).To(Succeed())
 
