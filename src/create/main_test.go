@@ -33,13 +33,7 @@ var _ = Describe("Create", func() {
 
 		srcReleaseDir := filepath.Join("..", "..")
 		copyReleaseDir(srcReleaseDir, releaseDir)
-
-		gitAddCmd := exec.Command("git", "add", ".")
-		gitAddCmd.Dir = releaseDir
-		Expect(gitAddCmd.Run()).To(Succeed())
-		wipCommitCmd := exec.Command("git", "commit", "-a", "--allow-empty", "-m", "WIP - test commit")
-		wipCommitCmd.Dir = releaseDir
-		Expect(wipCommitCmd.Run()).To(Succeed())
+		checkoutDirectory(releaseDir)
 
 		versionData, err := ioutil.ReadFile(filepath.Join(releaseDir, "VERSION"))
 		Expect(err).NotTo(HaveOccurred())
@@ -82,5 +76,23 @@ func copyReleaseDir(src, dst string) {
 	}
 	for _, path := range pathsToCopy {
 		cp(filepath.Join(src, path), dst)
+	}
+}
+
+func checkoutDirectory(dir string) {
+	cmds := []*exec.Cmd{
+		exec.Command("git", "config", "core.filemode", "false"),
+		exec.Command("git", "config", "user.email", "garden-windows-eng@pivotal.io"),
+		exec.Command("git", "config", "user.name", "Garden Windows CI"),
+		exec.Command("git", "submodule", "foreach", "--recursive", "git", "config", "core.filemode", "false"),
+		exec.Command("git", "add", "."),
+		exec.Command("git", "commit", "--allow-empty", "-m", "WIP - test commit"),
+	}
+
+	for _, cmd := range cmds {
+		cmd.Dir = dir
+		gitSession, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).NotTo(HaveOccurred())
+		Eventually(gitSession, 5*time.Second).Should(gexec.Exit(0))
 	}
 }
