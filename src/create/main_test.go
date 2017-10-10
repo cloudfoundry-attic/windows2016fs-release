@@ -93,6 +93,6 @@ func checkoutDirectory(dir string) {
 		cmd.Dir = dir
 		gitSession, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).NotTo(HaveOccurred())
-		Eventually(gitSession, 5*time.Second).Should(gexec.Exit(0))
+		Eventually(gitSession, 20*time.Second).Should(gexec.Exit(0))
 	}
 }
