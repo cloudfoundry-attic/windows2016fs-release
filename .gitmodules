@@ -1,3 +1,24 @@
 [submodule "src/code.cloudfoundry.org/windows2016fs"]
 	path = src/code.cloudfoundry.org/windows2016fs
 	url = https://github.com/cloudfoundry-incubator/windows2016fs
+[submodule "src/github.com/cloudfoundry/bosh-cli"]
+	path = src/github.com/cloudfoundry/bosh-cli
+	url = https://github.com/cloudfoundry/bosh-cli.git
+[submodule "src/github.com/onsi/ginkgo"]
+	path = src/github.com/onsi/ginkgo
+	url = https://github.com/onsi/ginkgo.git
+[submodule "src/github.com/onsi/gomega"]
+	path = src/github.com/onsi/gomega
+	url = https://github.com/onsi/gomega.git
+[submodule "src/golang.org/x/net"]
+	path = src/golang.org/x/net
+	url = https://go.googlesource.com/net
+[submodule "src/gopkg.in/yaml.v2"]
+	path = src/gopkg.in/yaml.v2
+	url = https://gopkg.in/yaml.v2
+[submodule "src/golang.org/x/text"]
+	path = src/golang.org/x/text
+	url = https://go.googlesource.com/text
+[submodule "src/github.com/cloudfoundry/bosh-utils"]
+	path = src/github.com/cloudfoundry/bosh-utils
+	url = https://github.com/cloudfoundry/bosh-utils.git

@@ -7,23 +7,8 @@ if ! [[ $(go version) == *go1.9* ]]; then
   exit 1
 fi
 
-if ! [[ $(bosh -v) == *"version 2"* ]]; then
-  echo "Must have BOSH cli v2"
-  exit 1
-fi
-
 ROOTDIR="$( dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" )"
 
 export GOPATH=$ROOTDIR
 
-pushd $ROOTDIR
-  image_tag=$(cat src/code.cloudfoundry.org/windows2016fs/IMAGE_TAG)
-  image_name="cloudfoundry/windows2016fs"
-  output_dir="blobs/windows2016fs"
-  mkdir -p $output_dir
-
-  go run src/code.cloudfoundry.org/windows2016fs/cmd/hydrate/main.go -image $image_name -outputDir $output_dir -tag $image_tag
-
-  release_version=$(cat VERSION)
-  bosh cr --version=$release_version
-popd
+go run "$ROOTDIR/src/create/main.go" "$ROOTDIR"
