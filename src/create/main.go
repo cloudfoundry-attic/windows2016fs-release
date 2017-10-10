@@ -29,6 +29,8 @@ func main() {
 
 	outputDir := filepath.Join(releaseDir, "blobs", "windows2016fs")
 
+	fmt.Printf(os.Getenv("PATH"))
+
 	h := hydrator.New(outputDir, imageName, imageTag)
 	if err := h.Run(); err != nil {
 		fmt.Println(err)
