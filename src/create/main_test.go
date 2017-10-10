@@ -81,10 +81,10 @@ func copyReleaseDir(src, dst string) {
 
 func checkoutDirectory(dir string) {
 	cmds := []*exec.Cmd{
-		//		exec.Command("git", "config", "core.filemode", "false"),
+		exec.Command("git", "config", "core.filemode", "false"),
 		exec.Command("git", "config", "user.email", "garden-windows-eng@pivotal.io"),
 		exec.Command("git", "config", "user.name", "Garden Windows CI"),
-		//		exec.Command("git", "submodule", "foreach", "--recursive", "git", "config", "core.filemode", "false"),
+		exec.Command("git", "submodule", "foreach", "--recursive", "git", "config", "core.filemode", "false"),
 		exec.Command("git", "add", "."),
 		exec.Command("git", "commit", "--allow-empty", "-m", "WIP - test commit"),
 	}
@@ -93,6 +93,6 @@ func checkoutDirectory(dir string) {
 		cmd.Dir = dir
 		gitSession, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).NotTo(HaveOccurred())
-		Eventually(gitSession, 20*time.Second).Should(gexec.Exit(0))
+		Eventually(gitSession, 1*time.Minute).Should(gexec.Exit(0))
 	}
 }
