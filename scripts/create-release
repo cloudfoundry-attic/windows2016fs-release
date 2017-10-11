@@ -15,7 +15,7 @@ if [[ -n "$DEV_ENV" ]]; then
   go build -o "$outfile" "$rootdir/src/create/main.go"
 else
   version=$(cat "$rootdir/VERSION")
-  url="https://github.com/cloudfoundry-incubator/windows2016fs-release/releases/download/$version/create-$version-linux-amd64"
+  url="https://s3.amazonaws.com/windows2016fs/create-binaries/create-$version-linux-amd64"
 
   mkdir -p "$rootdir/bin"
   curl --retry 15 --retry-delay 2 "$url" -o "$outfile" -L --fail -f

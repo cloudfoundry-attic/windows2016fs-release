@@ -14,7 +14,7 @@ if ($env:DEV_ENV -ne $null -and $env:DEV_ENV -ne "") {
   go build -o "$outfile" "$rootdir/src/create/main.go"
 } else {
   $version=(cat "$rootdir/VERSION")
-  $url="https://github.com/cloudfoundry-incubator/windows2016fs-release/releases/download/$version/create-$version-windows-amd64.exe"
+  $url="https://s3.amazonaws.com/windows2016fs/create-binaries/create-$version-windows-amd64.exe"
 
   mkdir -p "$rootdir/bin"
   $wc = New-Object net.webclient
