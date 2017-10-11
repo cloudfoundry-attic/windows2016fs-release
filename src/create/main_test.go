@@ -50,7 +50,7 @@ var _ = Describe("Create", func() {
 	})
 
 	It("creates the release", func() {
-		Eventually(session, 20*time.Minute).Should(gexec.Exit(0))
+		Eventually(session, 30*time.Minute).Should(gexec.Exit(0))
 
 		data, err := ioutil.ReadFile(filepath.Join(releaseDir, "dev_releases", "windows2016fs", fmt.Sprintf("windows2016fs-%s.yml", version)))
 		Expect(err).NotTo(HaveOccurred())
