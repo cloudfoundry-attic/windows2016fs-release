@@ -19,6 +19,7 @@ else
 
   mkdir -p "$rootdir/bin"
   curl --retry 15 --retry-delay 2 "$url" -o "$outfile" -L --fail -f
+  chmod +x "$outfile"
 fi
 
 "$outfile" "$rootdir"
