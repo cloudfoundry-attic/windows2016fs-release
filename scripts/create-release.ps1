@@ -14,11 +14,17 @@ if ($env:DEV_ENV -ne $null -and $env:DEV_ENV -ne "") {
   go build -o "$outfile" "$rootdir/src/create/main.go"
 } else {
   $version=(cat "$rootdir/VERSION")
+  $sha=(cat "$rootdir/CREATE_BIN_SHA_WINDOWS")
   $url="https://s3.amazonaws.com/windows2016fs/create-binaries/create-$version-windows-amd64.exe"
 
   mkdir -Force "$rootdir/bin"
   $wc = New-Object net.webclient
   $wc.Downloadfile($url, $outfile)
+  $actualSha=(Get-FileHash -Path $outfile -Algorithm SHA256).Hash.ToLower()
+  if ("$actualSha" -ne "$sha") {
+    echo "$actualSha did not match expected sha256 $sha"
+    exit 1
+  }
 }
 
 & "$outfile" "$rootdir"
