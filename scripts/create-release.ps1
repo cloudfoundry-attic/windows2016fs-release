@@ -1,4 +1,8 @@
-﻿$ErrorActionPreference = "Stop";
+﻿Param (
+  [string]$tarball=""
+)
+
+$ErrorActionPreference = "Stop";
 trap { $host.SetShouldExit(1) }
 
 $rootdir=(Split-Path -Parent $PSScriptRoot)
@@ -27,5 +31,12 @@ if ($env:DEV_ENV -ne $null -and $env:DEV_ENV -ne "") {
   }
 }
 
-& "$outfile" "$rootdir"
+if ($tarball -ne "") {
+  echo "Will write tarball to $tarball"
+  & "$outfile" --releaseDir "$rootdir" --tarball "$tarball"
+} else {
+  echo "NO TARBALL"
+  & "$outfile" --releaseDir "$rootdir"
+}
+
 exit $LASTEXITCODE

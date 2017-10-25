@@ -39,7 +39,7 @@ var _ = Describe("Create", func() {
 		Expect(err).NotTo(HaveOccurred())
 		version = string(versionData)
 
-		cmd := exec.Command(createBin, releaseDir)
+		cmd := exec.Command(createBin, "--releaseDir", releaseDir)
 
 		session, err = gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).NotTo(HaveOccurred())

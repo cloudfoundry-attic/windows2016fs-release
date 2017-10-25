@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -13,12 +15,12 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("bad args")
+	releaseDir, tarballPath, err := parseArgs()
+	if err != nil {
+		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
-	releaseDir := os.Args[1]
 	imageName := "cloudfoundry/windows2016fs"
 	tagData, err := ioutil.ReadFile(filepath.Join(releaseDir, "src", "code.cloudfoundry.org", "windows2016fs", "IMAGE_TAG"))
 	if err != nil {
@@ -47,18 +49,47 @@ func main() {
 		os.Exit(1)
 	}
 
+	l := logger.NewLogger(logger.LevelInfo)
+	u := ui.NewConfUI(l)
+	defer u.Flush()
+	deps := cmd.NewBasicDeps(u, l)
+
 	createReleaseOpts := &cmd.CreateReleaseOpts{
 		Directory: cmd.DirOrCWDArg{Path: releaseDir},
 		Version:   releaseVersion,
 	}
 
-	l := logger.NewLogger(logger.LevelInfo)
-	u := ui.NewConfUI(l)
-	defer u.Flush()
-	deps := cmd.NewBasicDeps(u, l)
+	if tarballPath != "" {
+		expanded, err := filepath.Abs(tarballPath)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		createReleaseOpts.Tarball = cmd.FileArg{FS: deps.FS, ExpandedPath: expanded}
+	}
+
 	createReleaseCommand := cmd.NewCmd(cmd.BoshOpts{}, createReleaseOpts, deps)
 	if err := createReleaseCommand.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func parseArgs() (string, string, error) {
+	var releaseDir, tarballPath string
+	flagSet := flag.NewFlagSet("", flag.ContinueOnError)
+
+	flagSet.StringVar(&releaseDir, "releaseDir", "", "")
+	flagSet.StringVar(&tarballPath, "tarball", "", "")
+
+	if err := flagSet.Parse(os.Args[1:]); err != nil {
+		return "", "", err
+	}
+
+	if releaseDir == "" {
+		return "", "", errors.New("missing required flag 'releaseDir'")
+	}
+
+	return releaseDir, tarballPath, nil
 }
