@@ -14,22 +14,13 @@ import (
 	"github.com/cloudfoundry/bosh-utils/logger"
 )
 
-func main() {
-	releaseDir, tarballPath, err := parseArgs()
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
-	}
-
-	imageName := "cloudfoundry/windows2016fs"
-	tagData, err := ioutil.ReadFile(filepath.Join(releaseDir, "src", "code.cloudfoundry.org", "windows2016fs", "IMAGE_TAG"))
+func CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath, outputDir string) {
+	tagData, err := ioutil.ReadFile(imageTagPath)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 	imageTag := string(tagData)
-
-	outputDir := filepath.Join(releaseDir, "blobs", "windows2016fs")
 
 	h := hydrator.New(outputDir, imageName, imageTag)
 	if err := h.Run(); err != nil {
@@ -37,7 +28,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	versionData, err := ioutil.ReadFile(filepath.Join(releaseDir, "VERSION"))
+	versionData, err := ioutil.ReadFile(versionDataPath)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -74,6 +65,24 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func main() {
+	releaseDir, tarballPath, err := parseArgs()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
+	imageName := "cloudfoundry/windows2016fs"
+
+	imageTagPath := filepath.Join(releaseDir, "src", "code.cloudfoundry.org", "windows2016fs", "IMAGE_TAG")
+
+	outputDir := filepath.Join(releaseDir, "blobs", "windows2016fs")
+
+	versionDataPath := filepath.Join(releaseDir, "VERSION")
+
+	CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath, outputDir)
 }
 
 func parseArgs() (string, string, error) {
