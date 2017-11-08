@@ -1,9 +1,7 @@
 package createRelease
 
 import (
-	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	"code.cloudfoundry.org/windows2016fs/hydrator"
@@ -12,30 +10,28 @@ import (
 	"github.com/cloudfoundry/bosh-utils/logger"
 )
 
-func CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath, outputDir string) {
+type ReleaseCreator struct{}
+
+func (rc ReleaseCreator) CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath, outputDir string) error {
 	tagData, err := ioutil.ReadFile(imageTagPath)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 	imageTag := string(tagData)
 
 	h := hydrator.New(outputDir, imageName, imageTag)
 	if err := h.Run(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	versionData, err := ioutil.ReadFile(versionDataPath)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	releaseVersion := cmd.VersionArg{}
 	if err := releaseVersion.UnmarshalFlag(string(versionData)); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	l := logger.NewLogger(logger.LevelInfo)
@@ -51,8 +47,7 @@ func CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionData
 	if tarballPath != "" {
 		expanded, err := filepath.Abs(tarballPath)
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			return err
 		}
 
 		createReleaseOpts.Tarball = cmd.FileArg{FS: deps.FS, ExpandedPath: expanded}
@@ -60,7 +55,8 @@ func CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionData
 
 	createReleaseCommand := cmd.NewCmd(cmd.BoshOpts{}, createReleaseOpts, deps)
 	if err := createReleaseCommand.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
+
+	return nil
 }

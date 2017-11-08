@@ -24,7 +24,12 @@ func main() {
 
 	versionDataPath := filepath.Join(releaseDir, "VERSION")
 
-	createRelease.CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath, outputDir)
+	releaseCreator := new(createRelease.ReleaseCreator)
+	err = releaseCreator.CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath, outputDir)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 }
 
 func parseArgs() (string, string, error) {
