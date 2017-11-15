@@ -12,14 +12,14 @@ import (
 
 type ReleaseCreator struct{}
 
-func (rc ReleaseCreator) CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath, outputDir string) error {
+func (rc ReleaseCreator) CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath string) error {
 	tagData, err := ioutil.ReadFile(imageTagPath)
 	if err != nil {
 		return err
 	}
 	imageTag := string(tagData)
 
-	h := hydrator.New(outputDir, imageName, imageTag)
+	h := hydrator.New(filepath.Join(releaseDir, "blobs", "windows2016fs"), imageName, imageTag)
 	if err := h.Run(); err != nil {
 		return err
 	}
