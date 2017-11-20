@@ -20,12 +20,10 @@ func main() {
 
 	imageTagPath := filepath.Join(releaseDir, "src", "code.cloudfoundry.org", "windows2016fs", "IMAGE_TAG")
 
-	outputDir := filepath.Join(releaseDir, "blobs", "windows2016fs")
-
 	versionDataPath := filepath.Join(releaseDir, "VERSION")
 
 	releaseCreator := new(createRelease.ReleaseCreator)
-	err = releaseCreator.CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath, outputDir)
+	err = releaseCreator.CreateRelease(imageName, releaseDir, tarballPath, imageTagPath, versionDataPath)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
