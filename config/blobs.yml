@@ -10,6 +10,6 @@ mingw/x86_64-7.1.0-release-win32-seh-rt_v5-rev0.7z:
   size: 46744190
   object_id: a74d842f-c175-45eb-6c93-a6171a4710a4
   sha: a07d2a45cf5c062e3dadc4f8c255be4493054f24
-windows2016fs/windows2016fs-0.0.33.tgz:
-  size: 3026853276
-  sha: 5ecd979eaf94b6e6f65b5e71dd7785c2498ff633
+windows2016fs/windows2016fs-0.0.34.tgz:
+  size: 3026884382
+  sha: ddfdecc957a9e68ca9dab410de0abe1e57492bf5
