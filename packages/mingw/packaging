@@ -2,9 +2,8 @@ $ErrorActionPreference = "Stop";
 trap { $host.SetShouldExit(1) }
 
 $BOSH_INSTALL_TARGET = Resolve-Path $env:BOSH_INSTALL_TARGET
-$path=(Get-ChildItem "mingw/x86_64-*.7z").FullName
-$7zip="C:\var\vcap\packages\7zip\7z.exe"
+$path=(Get-ChildItem "mingw/x86_64-*.zip").FullName
 
-Start-Process -FilePath "$7zip" -ArgumentList "x $path -o$BOSH_INSTALL_TARGET -y" -Wait -NoNewWindow -PassThru
+Expand-Archive -Path "$path" -DestinationPath "$BOSH_INSTALL_TARGET"
 
 Exit 0
