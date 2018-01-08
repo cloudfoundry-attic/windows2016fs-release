@@ -1,6 +1,9 @@
 ﻿$ErrorActionPreference = "Stop";
 trap { $host.SetShouldExit(1) }
 
+# workaround for https://github.com/Microsoft/hcsshim/issues/155
+Get-ComputeProcess | Stop-ComputeProcess -f
+
 $layersDir = "c:\var\vcap\data\windows2016fs\layers"
 $topLayer = (c:\var\vcap\packages\extract\extract.exe c:\var\vcap\packages\windows2016fs\windows2016fs.tgz $layersDir)
 if ($LASTEXITCODE -ne 0) {
