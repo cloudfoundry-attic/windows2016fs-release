@@ -1,9 +1,0 @@
----
-name: extract
-
-dependencies:
-  - golang-windows
-  - mingw
-
-files:
-  - code.cloudfoundry.org/windows2016fs/**/*

@@ -3,6 +3,10 @@ trap { $host.SetShouldExit(1) }
 
 $BOSH_INSTALL_TARGET = Resolve-Path "${env:BOSH_INSTALL_TARGET}"
 
-$rootfsTgz = (get-item windows2016fs\windows2016fs-*.tgz).Name
+$rootfsTarball = (get-item windows2016fs\windows2016fs-*.tgz).FullName
 
-mv "windows2016fs\$rootfsTgz" "$BOSH_INSTALL_TARGET\windows2016fs.tgz"
+tar -xf "$rootfsTarball" -C "$BOSH_INSTALL_TARGET"
+if ($LastExitCode -ne 0) {
+  Write-Host "extracting tarball failed"
+  Exit $LastExitCode
+}

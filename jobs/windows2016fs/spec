@@ -1,11 +1,9 @@
 ---
 name: windows2016fs
 
-templates:
-  pre-start.ps1: bin/pre-start.ps1
+templates: {}
 
 packages:
   - windows2016fs
-  - extract
 
 properties: {}
