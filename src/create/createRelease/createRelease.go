@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"code.cloudfoundry.org/windows2016fs/hydrator"
+	"code.cloudfoundry.org/hydrator/hydrator"
 	"github.com/cloudfoundry/bosh-cli/cmd"
 	"github.com/cloudfoundry/bosh-cli/ui"
 	"github.com/cloudfoundry/bosh-utils/logger"
