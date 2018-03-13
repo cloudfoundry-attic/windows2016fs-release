@@ -24,4 +24,4 @@
 	url = https://github.com/cloudfoundry/bosh-utils.git
 [submodule "src/code.cloudfoundry.org/hydrator"]
 	path = src/code.cloudfoundry.org/hydrator
-	url = git@github.com:cloudfoundry/hydrator.git
+	url = https://github.com/cloudfoundry/hydrator
