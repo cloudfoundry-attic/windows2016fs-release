@@ -2,6 +2,7 @@ package createRelease
 
 import (
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"code.cloudfoundry.org/hydrator/hydrator"
@@ -52,6 +53,14 @@ func (rc ReleaseCreator) CreateRelease(imageName, releaseDir, tarballPath, image
 
 		createReleaseOpts.Tarball = cmd.FileArg{FS: deps.FS, ExpandedPath: expanded}
 	}
+
+	// bosh create-release adds ~7GB of temp files that should be cleaned up
+	tmpDir, err := ioutil.TempDir("", "winfs-create-release")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmpDir)
+	os.Setenv("HOME", tmpDir)
 
 	createReleaseCommand := cmd.NewCmd(cmd.BoshOpts{}, createReleaseOpts, deps)
 	if err := createReleaseCommand.Execute(); err != nil {
