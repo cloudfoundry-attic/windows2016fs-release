@@ -9,13 +9,11 @@ $rootdir=(Split-Path -Parent $PSScriptRoot)
 $outfile = "$rootdir/bin/create.exe"
 
 if ($env:DEV_ENV -ne $null -and $env:DEV_ENV -ne "") {
-  if ((go version) -NotLike "*go1.9*") {
-    echo "Must have go 1.9"
-    exit 1
-  }
-
   $env:GOPATH=$rootdir
   go build -o "$outfile" "$rootdir/src/create/main.go"
+  if ($LASTEXITCODE -ne 0) {
+    Exit $LASTEXITCODE
+  }
 } else {
   $version=(cat "$rootdir/VERSION")
   $sha=(cat "$rootdir/CREATE_BIN_SHA_WINDOWS")
