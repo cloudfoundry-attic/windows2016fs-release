@@ -2,6 +2,7 @@ package createRelease
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -20,7 +21,7 @@ func (rc ReleaseCreator) CreateRelease(imageName, releaseDir, tarballPath, image
 	}
 	imageTag := string(tagData)
 
-	h := hydrator.New(filepath.Join(releaseDir, "blobs", "windows2016fs"), imageName, imageTag, false)
+	h := hydrator.New(log.New(os.Stdout, "", 0), filepath.Join(releaseDir, "blobs", "windows2016fs"), imageName, imageTag, false)
 	if err := h.Run(); err != nil {
 		return err
 	}
