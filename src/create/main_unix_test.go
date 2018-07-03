@@ -18,5 +18,5 @@ func cp(src string, dst string) {
 		GinkgoWriter,
 	)
 	Expect(err).NotTo(HaveOccurred())
-	Eventually(session, 5*time.Second).Should(gexec.Exit(0))
+	Eventually(session, 10*time.Second).Should(gexec.Exit(0))
 }
