@@ -31,7 +31,7 @@ var _ = Describe("Create", func() {
 		releaseDir, err = ioutil.TempDir("", "create.test-release")
 		Expect(err).NotTo(HaveOccurred())
 
-		srcReleaseDir := filepath.Join("..", "..")
+		srcReleaseDir := filepath.Join("..", "..", "..")
 		copyReleaseDir(srcReleaseDir, releaseDir)
 		checkoutDirectory(releaseDir)
 

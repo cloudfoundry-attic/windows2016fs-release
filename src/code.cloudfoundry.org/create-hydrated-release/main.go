@@ -1,7 +1,7 @@
 package main
 
 import (
-	"create/createRelease"
+	"code.cloudfoundry.org/create-hydrated-release/createRelease"
 	"errors"
 	"flag"
 	"fmt"

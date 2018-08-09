@@ -10,6 +10,8 @@ import (
 	"github.com/cloudfoundry/bosh-cli/cmd"
 	"github.com/cloudfoundry/bosh-cli/ui"
 	"github.com/cloudfoundry/bosh-utils/logger"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 type ReleaseCreator struct{}
@@ -21,7 +23,8 @@ func (rc ReleaseCreator) CreateRelease(imageName, releaseDir, tarballPath, image
 	}
 	imageTag := string(tagData)
 
-	h := hydrator.New(log.New(os.Stdout, "", 0), filepath.Join(releaseDir, "blobs", "windows2016fs"), imageName, imageTag, false)
+	releaseName, _ := rc.GetReleaseName(releaseDir)
+	h := hydrator.New(log.New(os.Stdout, "", 0), filepath.Join(releaseDir, "blobs", releaseName), imageName, imageTag, false)
 	if err := h.Run(); err != nil {
 		return err
 	}
@@ -69,4 +72,25 @@ func (rc ReleaseCreator) CreateRelease(imageName, releaseDir, tarballPath, image
 	}
 
 	return nil
+}
+
+func (rc ReleaseCreator) GetReleaseName(releaseDir string) (string, error) {
+	fileContents, err := ioutil.ReadFile(filepath.Join(releaseDir, "config", "final.yml"))
+	if err != nil {
+		return "", err
+	}
+
+	yamlObj := make(map[string]interface{})
+	err = yaml.Unmarshal(fileContents, yamlObj)
+	if err != nil {
+		return "", err
+	}
+
+	name, bExists := yamlObj["name"].(string)
+	if !bExists {
+		// Yaml doesn't contain the name
+		return "", err
+	}
+
+	return name, nil
 }

@@ -12,7 +12,7 @@ var createBin string
 
 var _ = BeforeSuite(func() {
 	var err error
-	createBin, err = gexec.Build("create")
+	createBin, err = gexec.Build("code.cloudfoundry.org/create-hydrated-release")
 	Expect(err).NotTo(HaveOccurred())
 })
 
