@@ -3,7 +3,7 @@
 	url = https://github.com/cloudfoundry-incubator/windows2016fs
 [submodule "src/github.com/cloudfoundry/bosh-cli"]
 	path = src/github.com/cloudfoundry/bosh-cli
-	url = https://github.com/cloudfoundry/bosh-cli.git
+	url = https://github.com/greenhouse-org/bosh-cli.git
 [submodule "src/github.com/onsi/ginkgo"]
 	path = src/github.com/onsi/ginkgo
 	url = https://github.com/onsi/ginkgo.git
