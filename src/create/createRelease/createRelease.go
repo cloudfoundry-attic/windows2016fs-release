@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"code.cloudfoundry.org/hydrator/hydrator"
+	"code.cloudfoundry.org/hydrator/imagefetcher"
 	"github.com/cloudfoundry/bosh-cli/cmd"
 	"github.com/cloudfoundry/bosh-cli/ui"
 	"github.com/cloudfoundry/bosh-utils/logger"
@@ -21,8 +21,8 @@ func (rc ReleaseCreator) CreateRelease(imageName, releaseDir, tarballPath, image
 	}
 	imageTag := string(tagData)
 
-	h := hydrator.New(log.New(os.Stdout, "", 0), filepath.Join(releaseDir, "blobs", "windows2016fs"), imageName, imageTag, false)
-	if err := h.Run(); err != nil {
+	i := imagefetcher.New(log.New(os.Stdout, "", 0), filepath.Join(releaseDir, "blobs", "windows2016fs"), imageName, imageTag, false)
+	if err := i.Run(); err != nil {
 		return err
 	}
 
