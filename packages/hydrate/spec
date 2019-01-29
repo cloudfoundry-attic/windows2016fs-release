@@ -1,0 +1,8 @@
+---
+name: hydrate
+
+dependencies:
+  - golang-windows
+
+files:
+  - code.cloudfoundry.org/hydrator/**/*

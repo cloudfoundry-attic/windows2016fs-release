@@ -20,3 +20,11 @@ Due to limitations in distributing the Microsoft container images, this release 
 
 If you are running in dev mode, set the `DEV_ENV` environment variable to `true`.
 
+## smoke test
+
+Ensure that `winc-release` and `windows2016fs-release` are uploaded to your BOSH director.
+
+```
+bosh -d windows2016fs deploy manifests/smoke-test.yml
+bosh -d windows2016fs run-errand smoke-test
+```
