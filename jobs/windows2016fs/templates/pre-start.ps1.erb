@@ -17,7 +17,41 @@ function cleanupCerts() {
 }
 
 <% if p("windows-rootfs.trusted_certs") == "" %>
+  $ErrorActionPreference = "Stop";
+  trap { $host.SetShouldExit(1) }
+
   Write-Host "No certs provided"
+  # Even though there are no certs in the manifest, we have to clean up any existing
+  # certs that may have been placed in the image due to an earlier deploy.
+  #
+  # If groot does not provide a link, then the version of winc-release being deployed
+  # is too old to support providing trusted certificates. As such, there can't be an existing top
+  # layer in the rootfs OCI image on disk with the extra certificates and so we can
+  # skip the remove layer step.
+  <% if_link('groot') do |groot| %>
+    <% groot.p('groot.cached_image_uris').each do |uri| %>
+      $uri = "<%= uri %>"
+      Write-Host "Cleaning any pre-existing certs from the top layer of $uri"
+      Write-Host "Acquiring RootfsMutex"
+
+      $mtx = New-Object System.Threading.Mutex($false, "RootfsMutex")
+      $thirtyMinutes = 30 * 60 * 1000
+      if (!$mtx.WaitOne($thirtyMinutes)) {
+        throw "Could not acquire RootfsMutex after 30 minutes"
+      }
+      C:\var\vcap\packages\hydrate\hydrate.exe remove-layer --ociImage $uri
+      if ($LASTEXITCODE -ne 0) {
+        Write-Host "hydrate.exe remove-layer failed"
+        $mtx.ReleaseMutex()
+        Write-Host "Released RootfsMutex"
+        exit $LASTEXITCODE
+      }
+      $mtx.ReleaseMutex()
+      Write-Host "Released RootfsMutex"
+      Write-Host "hydrate.exe remove-layer succeed for $uri"
+    <% end %>
+  <% end %>
+
   Write-Host "Finished windowsfs pre-start"
   exit 0
 <% end %>
